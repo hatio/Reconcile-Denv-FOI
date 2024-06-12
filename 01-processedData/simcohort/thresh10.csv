@@ -1,0 +1,19 @@
+titer_thresh,iFold,obsver,foiModel,scenario,rflag_seroinc,rflag_seroprev,slurmflag_seroprev,analysis_set
+10,1,uniform_5_15_nogap_2bleed3month_million,m1,perfect_steady,-model.ver simple_constPre -T.pre 0,-model.ver simple_constPre -T.pre 0,--array=1-3,non-constant foi prior to study
+10,1,uniform_5_15_nogap_2bleed3month_million,m1,perfect_steady,-model.ver simple,-model.ver simple,--array=1-3,account for non-constant foi prior to study
+10,1,uniform_5_15_nogap_4bleed3month_million,m1,perfect_steady,-model.ver simple,,,non-independent data points
+10,1,uniform_5_15_nogap_4bleed3month_500k,m1,perfect_steady,,-model.ver simple,,non-independent data points
+10,1,uniform_5_15_nogap_2bleed3month_million,m1,perfect_steady,-model.ver simple,-model.ver simple,--array=1-3,ideal
+10,1,uniform_5_15_nogap_2bleed3month_million,m1,perfect_wane,-model.ver simple,-model.ver simple,--array=1-3,single violation
+10,1,uniform_5_15_nogap_2bleed3month_million,m1,noisepos_steady,-model.ver simple,-model.ver simple,--array=1-3,single violation
+10,1,uniform_5_15_nogap_2bleed3month_million,m3,perfect_steady,-model.ver simple,-model.ver simple,--array=1-3,single violation
+10,1,uniform_5_15_nogap_2bleed3month_million,m1,noisepos_wane,-model.ver simple,-model.ver simple,--array=1-3,multiple violations
+10,1,uniform_5_15_nogap_2bleed3month_million,m1,noise_steady,-model.ver simple,-model.ver simple,--array=1-3,multiple violations
+10,1,uniform_5_15_nogap_2bleed3month_million,m1,noise_wane,-model.ver simple,-model.ver simple,--array=1-3,multiple violations
+10,1,uniform_5_15_nogap_2bleed3month_million,m3,noise_wane,-model.ver simple,-model.ver simple,--array=1-3,multiple violations
+10,1,uniform_5_15_nogap_2bleed3month_million,m1,noisepos_steady,-model.ver noisepos,-model.ver noisepos,--array=1-3,corrected
+10,1,uniform_5_15_nogap_2bleed3month_million,m1,noisepos_wane,-model.ver noisepos_wane,-model.ver noisepos_wane,--array=1-3,corrected
+10,1,uniform_5_15_nogap_2bleed3month_million,m1,noise_steady,-model.ver noise,-model.ver noise,--array=1-3,corrected
+10,1,uniform_5_15_nogap_2bleed3month_million,m1,noise_wane,-model.ver noise_wane,-model.ver noise_wane,--array=1-3,corrected
+10,1,uniform_5_15_nogap_2bleed3month_million,m3,perfect_steady,-model.ver kappa,-model.ver kappa,--array=1-3,corrected
+10,1,uniform_5_15_nogap_2bleed3month_million,m3,noise_wane,-model.ver noise_wane_kappa,-model.ver noise_wane_kappa,--array=1-3,corrected

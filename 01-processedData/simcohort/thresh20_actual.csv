@@ -1,0 +1,6 @@
+titer_thresh,iFold,obsver,foiModel,scenario,rflag_seroinc,rflag_seroprev,slurmflag_seroprev,analysis_set
+20,1,actual,m1,noise_wane,-model.ver noise_wane,-model.ver noise_wane,--array=1-3,corrected
+20,1,actual,m3,noise_wane,-model.ver noise_wane_kappa,-model.ver noise_wane_kappa,--array=1-3,corrected
+20,1,actual,m1,perfect_steady,-model.ver simple,-model.ver simple,--array=1-3,ideal
+20,1,actual,m1,noise_wane,-model.ver simple,-model.ver simple,--array=1-3,uncorrected
+20,1,actual,m3,noise_wane,-model.ver simple,-model.ver simple,--array=1-3,uncorrected
