@@ -13,3 +13,5 @@ Entry points for analyses are as follows.
 Directory `01-processedData` contains data that have been formatted for the analyses.
 Outputs of the analyses (model estimates and summary files) are provided in the `02-estimates` directory which
 are then used to produce figures and tables included the manuscript.
+
+*Note:* Collection dates of serological data and age of the participants have been rounded to maintain anonimity of the participants (see `Scripts/observed_data/roundData.R`).
