@@ -2,7 +2,7 @@
 
 
 # cohort linelist data uses birth dates: cannot be safely de-identified
-01-processedData/serology/
+01-processedData/serology/gmt_orig/
 
 
 

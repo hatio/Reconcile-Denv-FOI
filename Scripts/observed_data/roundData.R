@@ -12,8 +12,8 @@ list.files(indir) %>%
         mutate(
             dateCollect = 
                 paste(
-                    format(dateCollect, "%Y")
-                    , ceiling(as.integer(format(dateCollect, "%m")) / 3) * 3
+                    format(dateCollect, "%Y-%m")
+                    # , ceiling(as.integer(format(dateCollect, "%m")) / 3) * 3
                     , "01"
                     , sep = "-"
                 ) %>% as.Date
