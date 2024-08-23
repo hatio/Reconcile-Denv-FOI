@@ -82,7 +82,7 @@ Available configurations:
 - `-Omega`: Permanent rise in titers upon 1st DENV infection
 - `-Gamma`: Temporary rise in titers upon 1st DENV infection
 - `-Delta`: Exponential decay rate of the temporary rise (per year)
-- `-Omega0_rel`: Cross-reactive titers in DENV-naive individuals
+- `-Omega0_rel`: Cross-reactive titers in DENV-naive individuals as multiples of `Omega`
 - `-Sigma`: Standard deviation of the normally-distributed assay noise
 
 Note that these titers are on adjusted log2 scales: `log2(linear titer/10) + 1`.
