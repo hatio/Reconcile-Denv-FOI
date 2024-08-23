@@ -27,7 +27,13 @@ We can also use the `Scripts/simulation/cohort/simulate_obs.R` script to simulat
         -ageDelta 0.25 \
         -iFold 1
 
-See (here)[01-processedData/simcohort/obs/uniform_5_15_nogap_2bleed3month_million/1/obs.csv] for the simulated observation points.
+Below are the first few rows of the simulated observation points table `01-processedData/simcohort/obs/uniform_5_15_nogap_2bleed3month_million/1/obs.csv`.
+
+|dateCollect   |id |age               |location|titer|study|
+|--------------|---|------------------|--------|-----|-----|
+|    1999-02-09|1  |5.379799754184205 |NA      |NA   |NA   |
+|    1999-05-11|1  |5.629799754184205 |NA      |NA   |NA   |
+|    2016-02-10|2  |11.911966977408156|NA      |NA   |NA   |
 
 The observation point table contains the following headings:
 
@@ -61,11 +67,11 @@ This is to support having observations from multiple cohorts (as is the case for
 Below are the first few rows of the `01-processedData/simcohort/m3_uniform_5_15_nogap_2bleed3month_million/1/infection/NA.csv` created 
 from executing the code above. The `infectionAge` column are age at infections of the individual separated by semi-colons (empty if never infected).
 
-    study,id,location,dateBirth,infectionAge
-    NA,1,NA,1993-09-22,8.35995405141846;11.6935496935734
-    NA,10,NA,2001-01-16,
-    NA,100,NA,1991-09-16,11.2768410023729;14.769618414351
-    NA,1000,NA,1997-01-12,10.6491331988941
+|study         |id |location          |dateBirth|infectionAge|
+|--------------|---|------------------|---------|------------|
+|    NA        |1  |NA                |1993-09-22|8.35995405141846;11.6935496935734|
+|    NA        |10 |NA                |2001-01-16|            |
+|    NA        |100|NA                |1991-09-16|11.2768410023729;14.769618414351|
 
 As with simulating observation points, the flag `-iFold 1` specifies that this is realization number `1` of the infection histories table.
 This feature allows multiple realizations to be simulated and stored separately.
@@ -101,10 +107,11 @@ The above example generates an observed titer table stored in
 
 Here are the first few rows of what this file might look like:
 
-    dateCollect,id,age,titer,study,Titer.true
-    1999-02-09,1,5.379799754184205,6.383099278491924,NA,6.012346244490888
-    1999-05-11,1,5.629799754184205,5.35861099905044,NA,6.012346244490888
-    2007-02-15,10,6.079542569292244,4.4744763497580315,NA,6.012346244490888
+|dateCollect   |id |age               |titer|study|Titer.true       |
+|--------------|---|------------------|-----|-----|-----------------|
+|    1999-02-09|1  |5.379799754184205 |6.383099278491924|NA   |6.012346244490888|
+|    1999-05-11|1  |5.629799754184205 |5.35861099905044|NA   |6.012346244490888|
+|    2007-02-15|10 |6.079542569292244 |4.4744763497580315|NA   |6.012346244490888|
     
 The columns `dateCollect`, `id`, `age`, and `study` are taken from the input observation table(s).
 `titer` is the simulated observed titer while `Titer.true` is the true underlying titer of the individual at that point
