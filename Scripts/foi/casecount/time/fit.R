@@ -218,3 +218,67 @@ getFormattedParam = function(parname){
 
     getFormattedParam('p_dhf') %>%
     write_csv(file.path(outdir, "formatted_p_dhf.csv"))
+
+
+
+    #   Plot expected case counts
+    #   .........................
+
+# compute age distribution of cases by year
+ageGroup.case =
+    ageGroups %>%
+    apply(1, function(x){
+        which(x > 0) %>%
+        unique %>%
+        as.integer
+    })
+compare_case =
+    extract(fit, c("expect_case"))$expect_case %>%
+    apply(2:3, quantile, c(0.025, 0.5, 0.975)) %>%
+    apply(1, function(x){ x
+
+        1:ncol(case) %>%
+        lapply(function(y){
+            tibble(ageGroup = ageGroup.case, Val = x[ ,y]) %>%
+            mutate(Year = colnames(case)[y])
+        }) %>%
+        do.call(what = rbind)
+    }, simplify = F)
+compare_case =
+    mapply(function(x,newName){
+            x %>%
+            rename_with(function(a) newName, Val)
+        }
+        , x = compare_case
+        , newName = c('lowerVal','Val','upperVal')
+        , SIMPLIFY = F
+    ) %>%
+    Reduce(f = full_join) %>%
+    mutate(Type = "Expected")
+
+gCase = 
+    compare_case %>%
+    ggplot(aes(x = ageGroup, y = Val))+
+    # observed
+    geom_col(data = 
+        colnames(case) %>%
+            lapply(function(y){
+                tibble(ageGroup = ageGroup.case, Val = case[[y]]) %>%
+                filter(Val != -1) %>%
+                mutate(Year = y)
+            }) %>%
+            do.call(what = rbind)
+        , width = 1
+    )+    
+    # expected
+    geom_ribbon(aes(ymin = lowerVal, ymax = upperVal), alpha = 0.4)+
+    geom_line()+
+    facet_wrap( ~ Year, nrow = 4)+
+    ylab("Num. case")+
+    xlab("Age")
+    
+ggsave(gCase
+    , filename = file.path(outdir, "expect.pdf")
+    , width = 6.5
+    , height = 8
+)

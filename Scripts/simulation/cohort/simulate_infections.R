@@ -13,17 +13,24 @@ parser$add_argument('-outroot', default = '01-processedData/simcohort/m3', help 
 parser$add_argument('-iFold', type = 'integer', default = 1, help = 'i-th simulation.')
 parser$add_argument('-ncpu', type = "integer", default = 1)
 
-
-
 # parse arguments
 inputArg = parser$parse_args()
 
+
+
+# set initial seed to ensure reproducibility
 set.seed(19832)
+# generate a new seed that corresponds to simulation `i`
 runif(inputArg$iFold, 0, 10^6) %>% tail(1) %>% set.seed
 
+# set working directory of this i-th simulation
 outdir = with(inputArg, file.path(outroot, iFold))
+# subdirectory where infection timings of individuals will be saved to
 infectiondir = with(inputArg, file.path(outdir, 'infection'))
+# create the output directories
 dir.create(infectiondir, recursive = T)
+
+
 
     # Import observed datasets to get the numbers of individuals under study
     # and timings of their observations
@@ -32,9 +39,11 @@ Obs = list.files(inputArg$obs, pattern = "\\.csv$", full.names = T) %>%
     lapply(read_csv, col_types = 'Dcdcdc')
 
 
-    # Import KPPH estimates to use as underlying truth
+    # Import underlying true infection risk
 
+# temporal infection risk
 Tau = file.path(inputArg$params, 'Tau.csv') %>% read_csv(col_types = 'dd')
+# age-specific infection risk (relative to some age class)
 Kappa = file.path(inputArg$params, 'Kappa.csv') %>% read_csv(col_types = 'dd')
 
 
@@ -66,14 +75,15 @@ Obs %>%
 lapply(function(obs){
     # write headers of infection file for this study
     tibble(
-        study = character(0)
-        , id = character(0)
-        , location = character(0)
-        , dateBirth = character(0)
-        , infectionAge = character(0)
+        study = character(0)            # cohort study in which the individual was enrolled in
+        , id = character(0)             # unique identifier of the individual
+        , location = character(0)       # location where the individual resides
+        , dateBirth = character(0)      # birthdate of the individual
+        , infectionAge = character(0)   # age at infection
     ) %>%
     write_csv(file.path(infectiondir, paste0(obs$study[1],'.csv')))
     
+    # for each individual
     split(obs, obs$id) %>%
         lapply(function(x){
             # birth date
@@ -82,11 +92,14 @@ lapply(function(obs){
             A.delta = as.numeric(A.birth - as.Date(paste0(format(A.birth, '%Y'), '-01-01')), unit = 'days') / 365.25
 
             # Risk table
+            # : amount of risk faced within each risk interval
             Risk = Tau %>%
+                # filter for risk durations that the individual was alive to face
                 filter(between(Year
                     , A.birth %>% format('%Y') %>% as.integer
                     , (A.birth + max(Kappa$Age)*365.25) %>% format('%Y') %>% as.integer
                 )) %>%
+                # account for fractional time at risk as individuals are not born right at start of risk intervals
                 mutate(Tau = lapply(Tau, function(x){
                     data.frame(
                         Tau = rep(x, each = 2)
@@ -95,18 +108,23 @@ lapply(function(obs){
                 })) %>%
                 unnest(cols = Tau) %>%
                 tail(-1) %>%
+                # append relative age-specific risk
                 mutate(Kappa = rep(Kappa$Kappa, each = 2) %>% head(length(Tau))) %>%
                 # age at start of age segment
                 mutate(ageStart = cumsum(weight) - weight)
 
             # get age of each infection
-            iInfectMax = 4      # max number of infections in a lifetime
+            iInfectMax = 4      # max number of infections in a lifetime; 4 serotypes
+            # determine age of getting infected by each serotype (independently)
             A.infect = sapply(1:iInfectMax, function(i){
+                # draw from exponential distribtuions whether infection will happen within that risk interval
                 A.infect = rexp(nrow(Risk), with(Risk, Tau * Kappa))
+                # if no infection happened at any of the interval then the person is not infected till the end of follow up time
+                # return infection age as `NA`
                 if(!any(A.infect <= Risk$weight)){ return(NA) }
-                # index of age segment which infection occurred
+                # index of (first) age segment which infection occurred
                 iInfect = which(A.infect <= Risk$weight)[1]
-                # exact age at infection
+                # exact age at infection = age at start of risk interval + time it took to get infected within that time interval
                 Risk$ageStart[iInfect] + A.infect[iInfect]
             }) %>%
             sort

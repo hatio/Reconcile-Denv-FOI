@@ -75,7 +75,7 @@ model {
     }
 
     // prior
-    lambda ~ beta( 2, 38); // E(x) = 0.05
+    lambda ~ exponential(2); // Very non-informative prior slightly favoring smaller values
 }
 generated quantities {
 

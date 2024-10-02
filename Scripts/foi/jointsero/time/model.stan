@@ -56,7 +56,7 @@ data {
 
 
     // // index/breaks of binned parameters
-    int<lower=1> break_epoch_kappa[2, num_epoch_kappa + 1]; // row 1: for cases, row 2: for serology
+    int<lower=1> break_epoch_kappa[1, num_epoch_kappa + 1];
     
     matrix<lower=0>[1,num_thresh] titer_thresh;     // titer threshold (log-scaled)
     real<lower=0> Omega_long_shape_prior;      // priors: permanent titer upon 1st infection
@@ -146,9 +146,9 @@ model {
     pointer = 1;
     for(i in 1:num_intervals){
         // probability of escaping a particular serotype BEFORE the interval, by individual
-        pPre[i] = exp(-kappaPresenceRowvector(binned_kappa, kappa_study[pointer], prePresence[i], break_epoch_kappa[2, ]) * lambda');
+        pPre[i] = exp(-kappaPresenceRowvector(binned_kappa, kappa_study[pointer], prePresence[i], break_epoch_kappa[1, ]) * lambda');
         // probability of escaping a particular serotype DURING the interval, by individual
-        p[i] = exp(-kappaPresenceRowvector(binned_kappa, kappa_study[pointer], Presence[i], break_epoch_kappa[2, ]) * lambda');
+        p[i] = exp(-kappaPresenceRowvector(binned_kappa, kappa_study[pointer], Presence[i], break_epoch_kappa[1, ]) * lambda');
         if(i == sum(num_intervals_study[ :pointer])){ pointer += 1; }
     }
     // probability of being in each susceptibility state at START of the interval
@@ -168,7 +168,7 @@ model {
     pointer = 1;
     for(i in 1:num_indiv){
         // probability of escaping a particular serotype, by individual
-        p_prev[i] = exp(-kappaPresenceRowvector(binned_kappa, kappa_study[pointer], Presence_prev[i], break_epoch_kappa[2, ]) * lambda');
+        p_prev[i] = exp(-kappaPresenceRowvector(binned_kappa, kappa_study[pointer], Presence_prev[i], break_epoch_kappa[1, ]) * lambda');
         if(i == sum(num_indiv_study[ :pointer])){ pointer += 1; }
     }
     // probability of being in each susceptibility state
@@ -263,9 +263,9 @@ generated quantities {
         pointer = 1;
         for(i in 1:num_intervals){
             // probability of escaping a particular serotype BEFORE the interval, by individual
-            pPre[i] = exp(-kappaPresenceRowvector(binned_kappa, kappa_study[pointer], prePresence[i], break_epoch_kappa[2, ]) * lambda');
+            pPre[i] = exp(-kappaPresenceRowvector(binned_kappa, kappa_study[pointer], prePresence[i], break_epoch_kappa[1, ]) * lambda');
             // probability of escaping a particular serotype DURING the interval, by individual
-            p[i] = exp(-kappaPresenceRowvector(binned_kappa, kappa_study[pointer], Presence[i], break_epoch_kappa[2, ]) * lambda');
+            p[i] = exp(-kappaPresenceRowvector(binned_kappa, kappa_study[pointer], Presence[i], break_epoch_kappa[1, ]) * lambda');
             if(i == sum(num_intervals_study[ :pointer])){ pointer += 1; }
         }
         // probability of being in each susceptibility state at START of the interval
@@ -285,7 +285,7 @@ generated quantities {
         pointer = 1;
         for(i in 1:num_indiv){
             // probability of escaping a particular serotype, by individual
-            p_prev[i] = exp(-kappaPresenceRowvector(binned_kappa, kappa_study[pointer], Presence_prev[i], break_epoch_kappa[2, ]) * lambda');
+            p_prev[i] = exp(-kappaPresenceRowvector(binned_kappa, kappa_study[pointer], Presence_prev[i], break_epoch_kappa[1, ]) * lambda');
             if(i == sum(num_indiv_study[ :pointer])){ pointer += 1; }
         }
         // probability of being in each susceptibility state

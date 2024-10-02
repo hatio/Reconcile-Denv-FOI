@@ -241,7 +241,7 @@ control_file="thresh20_actual"
     #   ..............................
 
 # seroprevalence
-for fitdir in $( find 02-estimates_new -type f | \
+for fitdir in $( find 02-estimates -type f | \
     grep 'fit.RDS$' | \
     grep 'seroprevalence_thresh' | \
     sed -E 's/\/[0-9]+\/fit\.RDS$//g' ) ; do
@@ -257,15 +257,16 @@ done
     #   Plot FOI estimates (new narrative)
     #   ..................
 
-titer_thresh=10
-titer_thresh=20
+titer_thresh=10;foiAxisMax=0.4
+titer_thresh=20;foiAxisMax=0.2
 
 # Ideal scenario
 Rscript --vanilla Scripts/foi/compare/foi.R \
     "simcohort_thresh${titer_thresh}/high_power/ideal.pdf" \
     -fitdir.seroinc "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/perfect_steady/seroincidence_thresh${titer_thresh}/time/simple" \
-    -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/perfect_steady/seroprevalence_thresh${titer_thresh}/time/simple"
-
+    -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/perfect_steady/seroprevalence_thresh${titer_thresh}/time/simple" \
+    -foiAxisMax ${foiAxisMax}
+    
 # Effects of violating ONE assumption
 
     # Waning monotypic titers
@@ -273,7 +274,8 @@ Rscript --vanilla Scripts/foi/compare/foi.R \
     Rscript --vanilla Scripts/foi/compare/foi.R \
         "simcohort_thresh${titer_thresh}/high_power/violate_1/perfect_wane.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/perfect_wane/seroincidence_thresh${titer_thresh}/time/simple" \
-        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/perfect_wane/seroprevalence_thresh${titer_thresh}/time/simple"
+        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/perfect_wane/seroprevalence_thresh${titer_thresh}/time/simple" \
+        -foiAxisMax ${foiAxisMax}
 
     # When assay is imperfect (noisy)
     # - seroprev is still okay
@@ -281,14 +283,16 @@ Rscript --vanilla Scripts/foi/compare/foi.R \
     Rscript --vanilla Scripts/foi/compare/foi.R \
         "simcohort_thresh${titer_thresh}/high_power/violate_1/noisepos_steady.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noisepos_steady/seroincidence_thresh${titer_thresh}/time/simple" \
-        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noisepos_steady/seroprevalence_thresh${titer_thresh}/time/simple"
+        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noisepos_steady/seroprevalence_thresh${titer_thresh}/time/simple" \
+        -foiAxisMax ${foiAxisMax}
 
     # Effects of neglecting non-uniform risk in age
     Rscript --vanilla Scripts/foi/compare/foi.R \
         "simcohort_thresh${titer_thresh}/high_power/violate_1/kappa.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m3_uniform_5_15_nogap_2bleed3month_million/1/perfect_steady/seroincidence_thresh${titer_thresh}/time/simple" \
         -fitdir.seroprev "02-estimates/simcohort/m3_uniform_5_15_nogap_2bleed3month_million/1/perfect_steady/seroprevalence_thresh${titer_thresh}/time/simple" \
-        -truthdir "01-processedData/simcohort/m3/infection_param/mock"
+        -truthdir "01-processedData/simcohort/m3/infection_param/mock" \
+        -foiAxisMax ${foiAxisMax}
 
 # Effects of violating MULTIPLE assumptions
 # : seroinc inflation exacerbated 
@@ -297,26 +301,30 @@ Rscript --vanilla Scripts/foi/compare/foi.R \
     Rscript --vanilla Scripts/foi/compare/foi.R \
         "simcohort_thresh${titer_thresh}/high_power/violate_multi/noisepos_wane.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noisepos_wane/seroincidence_thresh${titer_thresh}/time/simple" \
-        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noisepos_wane/seroprevalence_thresh${titer_thresh}/time/simple"
+        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noisepos_wane/seroprevalence_thresh${titer_thresh}/time/simple" \
+        -foiAxisMax ${foiAxisMax}
 
     # when assay is noisy & cxr titers
     Rscript --vanilla Scripts/foi/compare/foi.R \
         "simcohort_thresh${titer_thresh}/high_power/violate_multi/noise_steady.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noise_steady/seroincidence_thresh${titer_thresh}/time/simple" \
-        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noise_steady/seroprevalence_thresh${titer_thresh}/time/simple"
+        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noise_steady/seroprevalence_thresh${titer_thresh}/time/simple" \
+        -foiAxisMax ${foiAxisMax}
 
     # when assay is noisy & waning monotypic titers & cxr
     Rscript --vanilla Scripts/foi/compare/foi.R \
         "simcohort_thresh${titer_thresh}/high_power/violate_multi/noise_wane.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noise_wane/seroincidence_thresh${titer_thresh}/time/simple" \
-        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noise_wane/seroprevalence_thresh${titer_thresh}/time/simple"
+        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noise_wane/seroprevalence_thresh${titer_thresh}/time/simple" \
+        -foiAxisMax ${foiAxisMax}
 
     # when assay is noisy & waning monotypic titers & cxr & non-uniform risk in age
     Rscript --vanilla Scripts/foi/compare/foi.R \
         "simcohort_thresh${titer_thresh}/high_power/violate_multi/noise_wane_kappa.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m3_uniform_5_15_nogap_2bleed3month_million/1/noise_wane/seroincidence_thresh${titer_thresh}/time/simple" \
-        -fitdir.seroprev "02-estimates/simcohort/m3_uniform_5_15_nogap_2bleed3month_million/1/noise_wane/seroprevalence_thresh${titer_thresh}/time/simple"
-
+        -fitdir.seroprev "02-estimates/simcohort/m3_uniform_5_15_nogap_2bleed3month_million/1/noise_wane/seroprevalence_thresh${titer_thresh}/time/simple" \
+        -foiAxisMax ${foiAxisMax}
+        
 # Re-plot these effects for main text figure
 titer_thresh=10
 
@@ -325,7 +333,8 @@ titer_thresh=10
         "simcohort_thresh${titer_thresh}/panel_c_high_power_ideal.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/perfect_steady/seroincidence_thresh${titer_thresh}/time/simple" \
         -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/perfect_steady/seroprevalence_thresh${titer_thresh}/time/simple" \
-        -foiAxisMax 0.42
+        -foiAxisMax 0.42 \
+        -foiAxisIncrement 0.05
 
     # when assay is noisy & waning monotypic titers & cxr
     Rscript --vanilla Scripts/foi/compare/foi.R \
@@ -340,7 +349,8 @@ titer_thresh=10
         -fitdir.seroinc "02-estimates/simcohort/m3_uniform_5_15_nogap_2bleed3month_million/1/perfect_steady/seroincidence_thresh${titer_thresh}/time/simple" \
         -fitdir.seroprev "02-estimates/simcohort/m3_uniform_5_15_nogap_2bleed3month_million/1/perfect_steady/seroprevalence_thresh${titer_thresh}/time/simple" \
         -truthdir "01-processedData/simcohort/m3/infection_param/mock" \
-        -foiAxisMax 0.42
+        -foiAxisMax 0.42 \
+        -foiAxisIncrement 0.05
 
     # when assay is noisy & waning monotypic titers & cxr & non-uniform risk in age
     Rscript --vanilla Scripts/foi/compare/foi.R \
@@ -351,30 +361,36 @@ titer_thresh=10
 
 
 # Efficiency of correcting violations
+titer_thresh=10;foiAxisMax=0.1
+titer_thresh=20;foiAxisMax=0.1
 
     # assay noise alone
     Rscript --vanilla Scripts/foi/compare/foi.R \
         "simcohort_thresh${titer_thresh}/high_power/relax/noisepos_steady.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noisepos_steady/seroincidence_thresh${titer_thresh}/time/noisepos" \
-        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noisepos_steady/seroprevalence_thresh${titer_thresh}/time/noisepos"
+        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noisepos_steady/seroprevalence_thresh${titer_thresh}/time/noisepos" \
+        -foiAxisMax ${foiAxisMax}
 
     # assay noise & waning monotypic titers
     Rscript --vanilla Scripts/foi/compare/foi.R \
         "simcohort_thresh${titer_thresh}/high_power/relax/noisepos_wane.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noisepos_wane/seroincidence_thresh${titer_thresh}/time/noisepos_wane" \
-        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noisepos_wane/seroprevalence_thresh${titer_thresh}/time/noisepos_wane"
+        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noisepos_wane/seroprevalence_thresh${titer_thresh}/time/noisepos_wane" \
+        -foiAxisMax ${foiAxisMax}
 
     # assay noise & waning monotypic titers & cxr titers
     Rscript --vanilla Scripts/foi/compare/foi.R \
         "simcohort_thresh${titer_thresh}/high_power/relax/noise_wane.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noise_wane/seroincidence_thresh${titer_thresh}/time/noise_wane" \
-        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noise_wane/seroprevalence_thresh${titer_thresh}/time/noise_wane"
+        -fitdir.seroprev "02-estimates/simcohort/m1_uniform_5_15_nogap_2bleed3month_million/1/noise_wane/seroprevalence_thresh${titer_thresh}/time/noise_wane" \
+        -foiAxisMax ${foiAxisMax}
 
     # assay noise & waning monotypic titers & cxr titers & non-uniform risk in age
     Rscript --vanilla Scripts/foi/compare/foi.R \
         "simcohort_thresh${titer_thresh}/high_power/relax/noise_wane_kappa.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m3_uniform_5_15_nogap_2bleed3month_million/1/noise_wane/seroincidence_thresh${titer_thresh}/time/noise_wane_kappa" \
-        -fitdir.seroprev "02-estimates/simcohort/m3_uniform_5_15_nogap_2bleed3month_million/1/noise_wane/seroprevalence_thresh${titer_thresh}/time/noise_wane_kappa"
+        -fitdir.seroprev "02-estimates/simcohort/m3_uniform_5_15_nogap_2bleed3month_million/1/noise_wane/seroprevalence_thresh${titer_thresh}/time/noise_wane_kappa" \
+        -foiAxisMax ${foiAxisMax}
     # the correction inefficiency when risk is non-uniform in age is similar to when risk is uniform in age
     
     # non-uniform risk in age alone
@@ -383,7 +399,8 @@ titer_thresh=10
         "simcohort_thresh${titer_thresh}/high_power/relax/kappa.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m3_uniform_5_15_nogap_2bleed3month_million/1/perfect_steady/seroincidence_thresh${titer_thresh}/time/kappa" \
         -fitdir.seroprev "02-estimates/simcohort/m3_uniform_5_15_nogap_2bleed3month_million/1/perfect_steady/seroprevalence_thresh${titer_thresh}/time/kappa" \
-        -truthdir "01-processedData/simcohort/m3/infection_param/mock"
+        -truthdir "01-processedData/simcohort/m3/infection_param/mock" \
+        -foiAxisMax ${foiAxisMax}
 
 
 # Reducing power to match cohort studies
@@ -394,13 +411,15 @@ titer_thresh=20
         "simcohort_thresh${titer_thresh}/actual_power/relax/relax_noise_wane.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m1_actual/1/noise_wane/seroincidence_thresh${titer_thresh}/time/noise_wane" \
         -fitdir.seroprev "02-estimates/simcohort/m1_actual/1/noise_wane/seroprevalence_thresh${titer_thresh}/time/noise_wane" \
-        -truthdir "01-processedData/simcohort/m1/infection_param/mock"
+        -truthdir "01-processedData/simcohort/m1/infection_param/mock" \
+        -foiAxisMax ${foiAxisMax}
 
     Rscript --vanilla Scripts/foi/compare/foi.R \
         "simcohort_thresh${titer_thresh}/actual_power/relax/relax_noise_wane_kappa.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m3_actual/1/noise_wane/seroincidence_thresh${titer_thresh}/time/noise_wane_kappa" \
         -fitdir.seroprev "02-estimates/simcohort/m3_actual/1/noise_wane/seroprevalence_thresh${titer_thresh}/time/noise_wane_kappa" \
-        -truthdir "01-processedData/simcohort/m3/infection_param/mock"
+        -truthdir "01-processedData/simcohort/m3/infection_param/mock" \
+        -foiAxisMax ${foiAxisMax}
 
     # In fact, uncertainty is still very high (especially in seroprevalence) even when no assumption violated
     # (perfect assay, no waning titers, uniform risk in age)
@@ -408,4 +427,5 @@ titer_thresh=20
     Rscript --vanilla Scripts/foi/compare/foi.R \
         "simcohort_thresh${titer_thresh}/actual_power/ideal.pdf" \
         -fitdir.seroinc "02-estimates/simcohort/m1_actual/1/perfect_steady/seroincidence_thresh${titer_thresh}/time/simple" \
-        -fitdir.seroprev "02-estimates/simcohort/m1_actual/1/perfect_steady/seroprevalence_thresh${titer_thresh}/time/simple"
+        -fitdir.seroprev "02-estimates/simcohort/m1_actual/1/perfect_steady/seroprevalence_thresh${titer_thresh}/time/simple" \
+        -foiAxisMax ${foiAxisMax}

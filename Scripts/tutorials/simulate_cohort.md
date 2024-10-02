@@ -13,7 +13,7 @@ Given these inputs, we can simulate titers of individuals are the *observation p
 
 ### Observation points
 
-Files in the [01-processedData/serology/gmt] directory are actual data observed from each of the cohort studies in Kamphaeng Phet.
+Files in the `01-processedData/serology/gmt` directory are actual data observed from each of the cohort studies in Kamphaeng Phet.
 These tables can be used as observation point tables to simulate titers from equivalent cohort studies with defined infection risk, titer kinetics, and assay noise models.
 
 We can also use the `Scripts/simulation/cohort/simulate_obs.R` script to simulate an observation points table that covers the same study periods as the actual cohort studies. Below is an example where we simulated observation points of 500,000 individuals uniformly sampled across years and ages (between 5 to 15yrs) with 2 bleeds per individual. The flag `-nogap` tells the script to not respect time gaps between the cohort studies (observations can happen in those years as well). `-ageDelta` specifies that age between bleeds of an individual are 3 months apart.
@@ -51,7 +51,7 @@ This feature allows multiple realizations to be simulated and stored separately.
 ### Infection histories
 
 Now that we have individuals under study, the next step is to simulate infection histories of individuals using
-a table of infection parameters [01-processedData/simcohort/m3/infection_param/mock] and
+a table of infection parameters `01-processedData/simcohort/m3/infection_param/mock` and
 the observation table we generated earlier.
 Note that path of the observation table(s) is supplied to the flag `-obs` as a directory which
 contains the observation tables rather than the files themselves.
@@ -75,6 +75,9 @@ from executing the code above. The `infectionAge` column are age at infections o
 
 As with simulating observation points, the flag `-iFold 1` specifies that this is realization number `1` of the infection histories table.
 This feature allows multiple realizations to be simulated and stored separately.
+
+**Important note:** We highly encourage checking out comments in `Scripts/simulation/cohort/simulate_infections.R` to understand assumptions behind how infection risk is used to simulate infection histories of individuals.
+Here, we assume that infection to each of the four dengue virus serotypes confers long-lived protection against the infecting serotype and no cross-protection against the other serotypes.
 
 
 ### Simulate titers
@@ -100,7 +103,7 @@ Note that these titers are on adjusted log2 scales: `log2(linear titer/10) + 1`.
         -scenario noisepos_steady \
         -Omega0_rel 0.2 -Delta 0
 
-For configurations not specified, (default values)[Scripts/simulation/cohort/simulate_titers.R] applies.
+For configurations not specified, default values in `Scripts/simulation/cohort/simulate_titers.R` applies.
 
 The above example generates an observed titer table stored in
 `01-processedData/simcohort/m3_uniform_5_15_nogap_2bleed3month_million/1/noisepos_steady`.

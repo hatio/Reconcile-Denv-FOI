@@ -124,7 +124,7 @@ model {
     }
 
     // priors: infection parameters
-    lambda ~ beta( 2, 38); // E(x) = 0.05
+    lambda ~ exponential(2); // Very non-informative prior slightly favoring smaller values
     binned_kappa_rel ~ lognormal(0.0, 0.1); // E(x) close to 1
     // priors: case reporting and pathogenesis
     binned_phi_a_rel ~ lognormal(0.0, 0.1); // E(x) close to 1
@@ -137,5 +137,54 @@ model {
 
 }
 generated quantities {
+
+    // expected values of observed data
+    matrix[len_Ag , len_times_case] expect_case;    // case counts
+
+    if(1){
+
+        // .... case data
+        // expected counts for each age
+        matrix[ len_ages , len_times_case ] ageCountExpected = rep_matrix(0.0, len_ages , len_times_case);
+        // expected counts for each age group
+        matrix[ len_Ag , len_times_case ] countExpected;        
+
+        // for each birth cohort
+        for (h in 1:len_cohorts){
+            // maximum time index to evaluate for this birth cohort
+            int Tmax = ((h - 1 + len_ages) > len_cohorts ? len_cohorts : h - 1 + len_ages);
+            // susceptibility state: 0,1,2,3,4
+            matrix[Tmax - h + 1 + 1, 5] S_cohort = rep_matrix(0.0, Tmax - h + 1 + 1, 5);
+            // infection
+            matrix[Tmax - h + 1, 4] I;
+            // probability of this cohort escaping each serotype at each age
+            row_vector[Tmax - h + 1] p_esc = exp(-cumulative_sum(lambda_cohort[h:Tmax] .* kappa[1:(Tmax - h + 1)]));
+            
+            S_cohort[1, 1] = 1.0; // everyone born susceptible
+            for (a in 1:num_elements(p_esc)){
+                for(i in 0:4){
+                    S_cohort[a+1, i+1] = (p_esc[a]^(4-i)) * (1-p_esc[a])^(i) * choose(4,i);
+                }
+            }
+
+            // fraction with susceptibility > i
+            for (a in 1:rows(S_cohort)){
+                S_cohort[a, 1:4] = 1 - cumulative_sum(S_cohort[a, 1:4]) ;
+            }
+            
+            // infections that happened = fraction susceptible > i that increased from last year
+            I = S_cohort[ 2 : , 1:4] - S_cohort[ :(rows(S_cohort)-1) , 1:4];
+            for (a in 1:rows(I)){ // age
+                // time = h + a - 1
+                int iTime = h + a - 1 - len_pretimes; // with(stanInput, len_cohorts - len_times_case)
+                if(iTime < 1){ continue; }
+                // compute expected cases from this age,year
+                ageCountExpected[a,iTime] = pop[h, iTime] * I[a,] * p_dhf * phi_t[iTime] * phi_a[a];
+            }
+        }
+        expect_case = mapAge * ageCountExpected;
+
+    }
+
 
 }

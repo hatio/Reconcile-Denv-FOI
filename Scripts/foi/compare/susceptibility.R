@@ -9,6 +9,9 @@ parser = ArgumentParser(description = "Scatterplot of susceptibility status.")
 parser$add_argument('outfile', help = 'Output file to save plot (relative to `outroot`).')
 parser$add_argument('-outroot', default = '03-plots/susceptibility', help = 'Root directory to store plots.')
 
+parser$add_argument('-obs.year.start', default = 1998, help = 'Year of 1st observation.')
+parser$add_argument('-obs.year.end', default = 2019, help = 'Year of last observation.')
+
 parser$add_argument('-S.x', required = T, help = 'Susceptibility states on x-axis.')
 parser$add_argument('-S.y', required = T, nargs = "*", help = 'Susceptibility states on y-axis.')
 parser$add_argument('-S.y.group', nargs = "*", help = 'Group (color) which `S.y` is associated with.')
@@ -54,7 +57,8 @@ dat =
         , by = c('year', 'age', 'S')
     ) %>%
     mutate(Source = factor(Source, levels = unique(inputArg$S.y.group))) %>%
-    ungroup
+    ungroup %>%
+    filter(between(year, inputArg$obs.year.start, inputArg$obs.year.end))
 
 
 

@@ -24,7 +24,8 @@ parser$add_argument('-splitFold', action="store_true", default=FALSE, help = 'Wh
 parser$add_argument('-truthdir', default = '01-processedData/simcohort/m1/infection_param/mock', help = "Directory storing true Tau(t), Kappa(a) for simulations.")
 parser$add_argument('-ref', default = 'Truth', help = 'Which FOI series to use as reference for comparisons.')
 parser$add_argument('-dropRatioCi', action="store_true", default=FALSE, help = 'Drop CI of ratio compared to reference series (default: FALSE).')
-parser$add_argument('-foiAxisMax', type = "double", help = 'Year of 1st observation.')
+parser$add_argument('-foiAxisMax', type = "double", help = 'Max of FOI axis.')
+parser$add_argument('-foiAxisIncrement', type = "double", help = 'Increment of FOI axis.')
 
 parser$add_argument('-salje', action="store_true", default=FALSE, help = 'Overlay FOI estimates from Salje, 2018.')
 
@@ -213,8 +214,6 @@ plotSeries = function(g, xname){
 # initiate plot with reference series
 gTime = 
     ggplot(mapping = aes(x = year))+
-    # # starting year of observed data
-    # geom_vline(xintercept = inputArg$obs.year.start, linetype = 3, linewidth = 0.3)+
     scale_color_grey()+
     ylab('Per-serotype FOI')+
     guides(fill = "none")+
@@ -356,7 +355,13 @@ dCorr =
         , by = 'year'
     )
 valMax = with(dCorr, max(upperVal.ref, upperVal))
-foiMax = ifelse(is.null(inputArg$foiAxisMax), valMax, inputArg$foiAxisMax)
+valMax = foiMax = ifelse(is.null(inputArg$foiAxisMax), valMax, inputArg$foiAxisMax)
+
+if(is.null(inputArg$foiAxisIncrement)){
+    valBreaks = seq(0, round(valMax,2), by = round(valMax/4, 2))
+} else {
+    valBreaks = seq(0, round(valMax,2), by = inputArg$foiAxisIncrement)
+}
 
 
 gCorr = 
@@ -381,12 +386,14 @@ gCorr =
         , paste0("Estimate (", inputArg$ref,")")
     ))+
     scale_x_continuous(
-        limits = c(0, round(valMax + 0.01, 2))
-        , breaks = seq(0, round(valMax,2), by = round(valMax/4, 2))
+        breaks = valBreaks
     )+
     scale_y_continuous(
-        limits = c(0, round(foiMax + 0.01, 2))
-        , breaks = seq(0, round(foiMax,2), by = round(valMax/4, 2))
+        breaks = valBreaks
+    )+
+    coord_cartesian(
+        xlim = c(0, round(valMax + 0.01, 2))
+        , ylim = c(0, round(foiMax + 0.01, 2))
     )
 
 
@@ -414,13 +421,15 @@ if(inputArg$inset){
         , height = 4.5
     )  
 
-} else if (is.null(inputArg$foiAxisMax)) {
+} else {
     
     g = 
         ggarrange(gTime+
                 scale_y_continuous(
-                    limits = c(0, round(foiMax + 0.01, 2))
-                    , breaks = seq(0, round(foiMax,2), by = round(valMax/4, 2))
+                    breaks = valBreaks
+                )+
+                coord_cartesian(
+                    ylim = c(0, round(foiMax + 0.01, 2))
                 )+
                 theme(axis.title.y = element_text(hjust = 0.4 * valMax/foiMax))
             , gCorr
@@ -445,21 +454,7 @@ if(inputArg$inset){
         , width = 5.5
         , height = 2
     )   
-
-} else {
-    g =
-        gTime+
-        scale_y_continuous(
-            limits = c(0, round(foiMax + 0.01, 2))
-            , breaks = seq(0, round(foiMax,2), by = round(valMax/4, 2))
-        )
-        
-    ggsave(g
-        , filename = outfile
-        , width = 3.5
-        , height = 3.5
-    )   
-} 
+}
 
 
 

@@ -2,6 +2,8 @@
 #' title: "Supplementary mathematical analysis: biases in force of infection inferred from seroincidence data"
 #' author: ""
 #' date: ""
+#' header-includes:
+#'   - \pagenumbering{gobble}
 #' ---
 
 
@@ -339,7 +341,7 @@ ggarrange(
     , labels = c("", "c")
 )
 
-#' Figure S\ref{fig:demo} illustrates ranges of the biases and their relative contributions using mean parameter estimates of $\omega=`r Omega`$ and $\sigma=`r Sigma`$ from Salje, 2018 under various interval lengths and seropositivity cut-offs.
+#' Figure \ref{fig:demo} illustrates ranges of the biases and their relative contributions using mean parameter estimates of $\omega=`r Omega`$ and $\sigma=`r Sigma`$ from Salje, 2018 under various interval lengths and seropositivity cut-offs.
 #' The amount of cross-reactive titers relative to DENV-specific titers was artibrarily set to 20\% ($\omega_0 = 0.2 \omega$). Per-serotype FOI (historical and during the interval) is set to 0.03.
 
 #' Under these parameters, we can see that the magnitude of positive bias from false negative scenario at $t$ is far higher biases from the true negative scenario. Increasing the cut-off reduces the lower bound of such inflation (leading to greater uncertainty in the amount of bias introduced) and increases the contribution of the false negative scenario.
@@ -381,8 +383,8 @@ ggarrange(
 #'
 
 #' The growing contribution of $\bar{\lambda}A$ in $\Lambda(A)$ as age increases shrinks the impact of timing of the pre-interval blood draw in relation to seasonality.
-#' Figure S\ref{fig:season}a-c illustrates this shrinkage under parameter estimates from Salje, 2018.
-#' On the other hand, for infections that occurred within the intervals, seasonality and the interval lengths dictates the distribution of time since infection at the second bleed (Figure S\ref{fig:season}d). These timing variations affects the amount of titers waned, and consequentially, the probability of falsely testing negative at post-interval bleed. Figure S\ref{fig:season}e illustrates this nuance under parameter estimates from Salje, 2018.
+#' Figure \ref{fig:season}a-c illustrates this shrinkage under parameter estimates from Salje, 2018.
+#' On the other hand, for infections that occurred within the intervals, seasonality and the interval lengths dictates the distribution of time since infection at the second bleed (Figure \ref{fig:season}d). These timing variations affects the amount of titers waned, and consequentially, the probability of falsely testing negative at post-interval bleed. Figure \ref{fig:season}e illustrates this nuance under parameter estimates from Salje, 2018.
 
 
 # FOI at time t
@@ -419,10 +421,10 @@ probTime = function(time, phaseDiff, avgFoi = 0.03, deltaFoi = 0.02){
     #   probability of being infected within dt
     foi.t(time, phaseDiff, avgFoi, deltaFoi)
 }
-    # # --- checked: the math does matches up -----
+    # # --- check that the math matches up -----
     # 1 - exp(-foi.cum.t(10.2, 0.5))
     # integrate(probTime, 0, 10.2, phaseDiff = 0.5)
-    # # -------------------------------------------
+    # # ----------------------------------------
 
 # Probability of being monotypically infected at time t
 probMono = function(time, phaseDiff, avgFoi = 0.03, deltaFoi = 0.02){
@@ -566,6 +568,7 @@ ggarrange(
     , gTiter
     , gTiter.interval
     , gMono
+    # , ggplot()+theme_void()
     , as_ggplot(get_legend(gTiter))
     , ncol = 2
     , nrow = 3

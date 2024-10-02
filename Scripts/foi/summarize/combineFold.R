@@ -117,3 +117,23 @@ if(!is.null(fitsum)){
     fitsum %>%
     write_csv(file.path(inputArg$indir, 'est.csv'))    
 }
+
+
+#   Susceptibility reconstructions
+#   ..............................
+
+inputArg$indir %>%
+    list.dirs(recursive = F, full.names = F) %>%
+    lapply(function(iFold){
+        file.path(inputArg$indir, iFold, "S.csv") %>% 
+        read_csv %>%
+        mutate(Fold = iFold)
+    }) %>%
+    do.call(what = rbind) %>%
+    group_by(iTime, year, age, S) %>%
+    summarize(
+        Val = median(Val)
+        , lowerVal = min(lowerVal)
+        , upperVal = max(upperVal)
+    ) %>%
+    write_csv(file.path(inputArg$indir, 'S.csv'))    

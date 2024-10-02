@@ -18,13 +18,13 @@ are then used to produce figures and tables included the manuscript.
 *Note:* Collection dates of serological data and age of the participants have been rounded to maintain anonimity of the participants (see `Scripts/observed_data/roundData.R`).
 
 
-## Tutorials
+## Analysis tutorial for code reuse/repurposing
 
 The following tutorials were created to demonstrate the mechanics of the code in this repository.
 We hope this would facilitate the reuse/adaption of our code for future analyses.
 
 1. [Simulate a cohort study](Scripts/tutorials/simulate_cohort.md)
 
-2. [Infer force of infection](Scripts/tutorials/infer.md)
+2. [Infer force of infection](Scripts/tutorials/infer.md) -- includes inferring test positive probabilities when multiple data types are available.
 
 3. [Compare/plot estimates](Scripts/tutorials/compare.md)

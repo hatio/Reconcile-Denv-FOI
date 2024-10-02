@@ -62,12 +62,31 @@ fitCasecount_observed(){
     echo '---------------'
 }
 
+fitConfirmedcount_observed(){
+    cmd="Rscript --vanilla Scripts/foi/casecount/${stanver}/fit.R \
+        -casedir "${confirmedcasedatadir}" \
+        -popfile "00-RawData/population/KamphaengPhet.csv" \
+        -outbase "02-estimates${confirmedcasedatadir##01-processedData}" \
+        -ncpu ${NUM_CHAINS} \
+        ${FLAG_RSCRIPT} \
+        "
+    echo '---------------'
+    sbatch \
+        --job-name="case_${stanver}:observed" \
+        --export=modules_to_load=${MODULES_TO_LOAD},cmd="${cmd}" \
+        --mem-per-cpu=3gb \
+        --cpus-per-task=${NUM_CHAINS} \
+        ${FLAG_SLURM} \
+        ${@} \
+        ${SBATCH_FILE}
+    echo Command: $cmd
+    echo '---------------'
+}
+
 fitJointSeroModel_observed(){
     cmd="Rscript --vanilla Scripts/foi/jointsero/${stanver}/fit.R \
         -outbase "02-estimates/jointsero_thresh${titer_thresh/ /_}" \
         -indir.sero "${datadir}" \
-        -casedir "${casedatadir}" \
-        -popfile "00-RawData/population/KamphaengPhet.csv" \
         -titer.threshold "${titer_thresh}" \
         -ncpu ${NUM_CHAINS} \
         ${FLAG_RSCRIPT} \
@@ -107,6 +126,7 @@ SBATCH_FILE="Scripts/configs/universal.sbatch"
 
 # Path to datasets
 casedatadir="01-processedData/casecount/KD2021/ageMin1_ageMax99/Annual_Mueng"
+confirmedcasedatadir="01-processedData/casecount/KD2021_dengue/ageMin1_ageMax99/Annual_Mueng"
 datadir="01-processedData/serology/gmt"
 
 
@@ -148,6 +168,7 @@ stanver="time"
 NUM_CHAINS=5
 FLAG_RSCRIPT="-model.mod m1h.rta"
 fitCasecount_observed
+fitConfirmedcount_observed
 
 
 
@@ -266,6 +287,7 @@ titer_thresh=20
         -fitdir.seroprev "02-estimates/seroprevalence_thresh${titer_thresh}/time/simple" \
         -fitdir.case "02-estimates/casecount/KD2021/ageMin1_ageMax99/Annual_${case_area}/time/m1h.rta" \
         -ref "Case" \
+        -foiAxisMax 0.2 \
         -salje
     Rscript --vanilla Scripts/foi/compare/foi.R \
         "observed_data_thresh${titer_thresh}/m1_${case_area}_dropCi.pdf" \
@@ -273,6 +295,7 @@ titer_thresh=20
         -fitdir.seroprev "02-estimates/seroprevalence_thresh${titer_thresh}/time/simple" \
         -fitdir.case "02-estimates/casecount/KD2021/ageMin1_ageMax99/Annual_${case_area}/time/m1h.rta" \
         -ref "Case" \
+        -foiAxisMax 0.2 \
         -dropRatioCi \
         -salje
     Rscript --vanilla Scripts/foi/compare/foi.R \
@@ -288,18 +311,13 @@ titer_thresh=20
         -S.x \
             "02-estimates/casecount/KD2021/ageMin1_ageMax99/Annual_${case_area}/time/m1h.rta/S.csv" \
         -S.y \
-            "02-estimates/seroprevalence_thresh${titer_thresh}/time/simple/1/S.csv" \
-            "02-estimates/seroprevalence_thresh${titer_thresh}/time/simple/2/S.csv" \
-            "02-estimates/seroprevalence_thresh${titer_thresh}/time/simple/3/S.csv" \
+            "02-estimates/seroprevalence_thresh${titer_thresh}/time/simple/S.csv" \
             "02-estimates/seroincidence_thresh${titer_thresh}/time/simple/S.csv" \
         -S.y.group \
-            "Seroprevalence" \
-            "Seroprevalence" \
             "Seroprevalence" \
             "Seroincidence" \
         -lab.x "Case-derived" \
         -lab.y "Serology-derived"
-
 
     # Annual FOI
     # (only lab-confirmed cases for case-derived FOIs)
@@ -308,7 +326,9 @@ titer_thresh=20
         -fitdir.seroinc "02-estimates/seroincidence_thresh${titer_thresh}/time/simple" \
         -fitdir.seroprev "02-estimates/seroprevalence_thresh${titer_thresh}/time/simple" \
         -fitdir.case "02-estimates/casecount/KD2021_dengue/ageMin1_ageMax99/Annual_${case_area}/time/m1h.rta" \
-        -ref "Case"
+        -ref "Case" \
+        -foiAxisMax 0.2 \
+        -salje
 
     # Reconstructed susceptibility (vs case)
     # (only lab-confirmed cases for case-derived FOIs)
@@ -317,13 +337,9 @@ titer_thresh=20
         -S.x \
             "02-estimates/casecount/KD2021_dengue/ageMin1_ageMax99/Annual_${case_area}/time/m1h.rta/S.csv" \
         -S.y \
-            "02-estimates/seroprevalence_thresh${titer_thresh}/time/simple/1/S.csv" \
-            "02-estimates/seroprevalence_thresh${titer_thresh}/time/simple/2/S.csv" \
-            "02-estimates/seroprevalence_thresh${titer_thresh}/time/simple/3/S.csv" \
+            "02-estimates/seroprevalence_thresh${titer_thresh}/time/simple/S.csv" \
             "02-estimates/seroincidence_thresh${titer_thresh}/time/simple/S.csv" \
         -S.y.group \
-            "Seroprevalence" \
-            "Seroprevalence" \
             "Seroprevalence" \
             "Seroincidence" \
         -lab.x "Case-derived" \
@@ -354,16 +370,11 @@ case_area="Mueng"
         -S.x \
             "02-estimates/casecount/KD2021/ageMin1_ageMax99/Annual_${case_area}/time/m3h.rta/S.csv" \
         -S.y \
-            "02-estimates/jointsero_thresh10_20/time/1/S.csv" \
-            "02-estimates/jointsero_thresh10_20/time/2/S.csv" \
-            "02-estimates/jointsero_thresh10_20/time/3/S.csv" \
+            "02-estimates/jointsero_thresh10_20/time/S.csv" \
         -S.y.group \
-            "Joint sero." \
-            "Joint sero." \
             "Joint sero." \
         -lab.x "Case (extended)" \
         -lab.y "Joint serology"
-
 
 
     #   Plot sensitivity of serology-derived FOI
@@ -375,8 +386,8 @@ Rscript --vanilla Scripts/foi/compare/ppos_foi.R \
     -fitdir.seroinc "02-estimates/seroincidence_thresh10/time/set_kappaJointsero" \
     -fitdir.seroprev "02-estimates/seroprevalence_thresh10/time/set_kappaJointsero" \
     -fitdir.ref "02-estimates/casecount/KD2021/ageMin1_ageMax99/Annual_Mueng/time/m3h.rta" \
-    -ppos0 0.07203656416889753 \
-    -ppos1.long 0.9996810774944899
+    -ppos0 0.0727824403934666 \
+    -ppos1.long 0.9996500066492124
 
 # titer thresh = 20
 Rscript --vanilla Scripts/foi/compare/ppos_foi.R \
@@ -384,8 +395,8 @@ Rscript --vanilla Scripts/foi/compare/ppos_foi.R \
     -fitdir.seroinc "02-estimates/seroincidence_thresh20/time/set_kappaJointsero" \
     -fitdir.seroprev "02-estimates/seroprevalence_thresh20/time/set_kappaJointsero" \
     -fitdir.ref "02-estimates/casecount/KD2021/ageMin1_ageMax99/Annual_Mueng/time/m3h.rta" \
-    -ppos0 3.061701422826246e-4 \
-    -ppos1.long 0.9256323037252381
+    -ppos0 3.2302652108467944e-4 \
+    -ppos1.long 0.9245303333330401
 
 
     #   Format estimates for supplementary tables
