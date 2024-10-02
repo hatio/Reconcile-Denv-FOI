@@ -43,26 +43,6 @@ parser$add_argument('-n_warmup', type = "integer", default = 200)
 parser$add_argument('-overwriteRDS', action = "store_true", default = FALSE)
 
 
-
-# # test
-
-inputArg = parser$parse_args(c(
-    '-outbase', "02-estimates/joint_thresh10_20"
-    , '-indir.sero', "01-processedData/serology/gmt"
-    , '-casedir', '01-processedData/casecount/KD2021/ageMin1_ageMax99/Annual_Mueng'
-    , '-popfile', '00-RawData/population/KamphaengPhet.csv'
-
-    , '-ncpu', 2
-    , '-n_iter', 50
-    , '-n_warmup', 10
-    , '-titer.threshold', 10, 20
-    , '-Kappa'
-    , '-studyOrder', 'kps1', 'kps2', 'kps3'
-))
-
-
-
-
 # parse arguments
 inputArg = parser$parse_args()
 attach(inputArg)
