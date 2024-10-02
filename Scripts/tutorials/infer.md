@@ -4,13 +4,13 @@
 All inference scripts in this repository requires an output directory specified through the `-outbase` flag.
 They also share the following default configurations for the inferences.
 
-|flag           |default|description                                                                                                                                                                                            |
-|---------------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|`-ncpu`        | 3     | Number of cpus available (the same number of MCMC chains will be initialized).                                                                                                                        |
-|`-thin_factor` | 5     | Keep every *n*-th steps/iterations in the output chains. Higher thinning leads to less posterior samples being kept which reduces correlations in the samples and the of storage needed to store them.|
-|`n_iter`       | 2000  | Number of iterations to run the MCMC (warmup included).                                                                                                                                               |
-|`n_warmup`     | 200   | Number of iterations treated as warmup (discarded).                                                                                                                                                   |
-|`-overwriteRDS`| FALSE | Including this flag means parameters will be re-estimated even if an existing fit (stored as RDS file) is available in the output directory.                                                          |
+|flag            |default|description                                                                                                                                                                                       |
+|----------------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|`-ncpu`         | 3     | Number of cpus available (the same number of MCMC chains will be initialized).                                                                                                                        |
+|`-thin_factor`  | 5     | Keep every *n*-th steps/iterations in the output chains. Higher thinning leads to less posterior samples being kept which reduces correlations in the samples and the of storage needed to store them.|
+|`n_iter`        | 2000  | Number of iterations to run the MCMC (warmup included).                                                                                                                                               |
+|`n_warmup`      | 200   | Number of iterations treated as warmup (discarded).                                                                                                                                                   |
+|`-overwriteRDS` | FALSE | Including this flag means parameters will be re-estimated even if an existing fit (stored as RDS file) is available in the output directory.                                                          |
 
 The sections below provides example calls to the respective inference scripts with input files that are available in this repository.
 Please check these files for the appropriate file formats.
