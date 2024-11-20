@@ -129,8 +129,8 @@ model {
     // priors: case reporting and pathogenesis
     binned_phi_a_rel ~ lognormal(0.0, 0.1); // E(x) close to 1
     binned_phi_t ~ beta(2,2);  // E(x) = 0.5
-    p_dhf_rel[1] ~ beta(1, 99);  // E(x) = 0.01 with zero being possible
-    p_dhf_rel[2:3] ~ beta(1, 999);  // E(x) = 0.001 with zero being possible
+    p_dhf_rel[1] ~ beta(1, 9);  // E(x) = 0.1 with zero being possible
+    p_dhf_rel[2:3] ~ beta(1, 19);  // E(x) = 0.05 with zero being possible
 
     // priors: hyperparameter
     psi ~ normal(0, 50);
