@@ -3,7 +3,8 @@
 #' author: ""
 #' date: ""
 #' header-includes:
-#'   - \pagenumbering{gobble}
+#'   \pagenumbering{gobble}
+#'   \setcounter{table}{0}  \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{11} \renewcommand{\thefigure}{S\arabic{figure}}
 #' ---
 
 
@@ -22,6 +23,7 @@ Delta = 0.017 * 365.25
 Sigma = 0.49
 # Arbitrary relative amount of CXR titer
 Omega0_rel = 0.2
+
 
 
 #' Notations used throughout this document are defined as follows.
